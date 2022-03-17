@@ -4,9 +4,11 @@ public class ToFileWriter {
     public void saveToFile(Instance instance) {
 
         try {
-            String path = "/data/" + instance.getName();
+
+            String path = "data/" + instance.getName();
             if (instance.getType() == Instance.type_enum.TSP) path = path + ".tsp";
             else if (instance.getType() == Instance.type_enum.ATSP) path = path + ".atsp";
+            System.out.println(path);
 
             File fout = new File(path);
             FileOutputStream fos = new FileOutputStream(fout);
