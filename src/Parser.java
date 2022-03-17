@@ -50,6 +50,16 @@ public class Parser {
             i++;
         }
 
+        if (instance.getEdge_weight_type() == Instance.edge_weight_type_enum.EUC_2D) {
+            parseEUC_2D(file, instance);
+        } else if (instance.getEdge_weight_type() == Instance.edge_weight_type_enum.EXPLICIT &&
+                instance.getEdge_weight_format() == Instance.edge_weight_format_enum.FULL_MATRIX) {
+            parseFULL_MATRIX(file, instance);
+        } else if (instance.getEdge_weight_type() == Instance.edge_weight_type_enum.EXPLICIT &&
+                instance.getEdge_weight_format() == Instance.edge_weight_format_enum.LOWER_DIAG_ROW) {
+            parseLOWER_DIAG_ROW(file, instance);
+        }
+
     }
 
     public void parseEUC_2D(File file, Instance instance) throws IOException {
@@ -112,7 +122,7 @@ public class Parser {
         BufferedReader br = new BufferedReader(isr);
         StringBuilder content = new StringBuilder();
         String line = br.readLine();
-        List<String> tokens = null;
+        List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer;
 
         while (!(line.startsWith("EDGE_WEIGHT_SECTION"))) {
@@ -120,16 +130,108 @@ public class Parser {
         }
         int i = 0;
         while(!(line = br.readLine()).equals("EOF")){
+            tokenizer = new StringTokenizer(line, " ");
+            while (tokenizer.hasMoreElements()) {
+                tokens.add(tokenizer.nextToken());
+            }
+            while (tokens.size() >= instance.getDimension()) {
+                for (int j = 0; j < instance.getDimension(); j++) {
+                    instance.edge_weight_matrix[i][j] = Integer.parseInt(tokens.get(j));
+                }
+                i++;
+                for (int j = 0; j < instance.getDimension(); j++) {
+                    tokens.remove(0);
+                }
+            }
+
+        }
+        //instance.printMatrix(i-1);
+    }
+
+    public void parseLOWER_DIAG_ROW(File file, Instance instance) throws IOException {
+
+        instance.edge_weight_matrix = new int[instance.getDimension()][instance.getDimension()];
+
+        FileInputStream fis = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(isr);
+        StringBuilder content = new StringBuilder();
+        String line = br.readLine();
+        List<String> tokens = new ArrayList<>();
+        StringTokenizer tokenizer;
+
+        while (!(line.startsWith("EDGE_WEIGHT_SECTION"))) {
+            line = br.readLine();
+        }
+        int i = 0;
+        while(!(line = br.readLine()).equals("EOF")){
+            tokenizer = new StringTokenizer(line, " ");
+            while (tokenizer.hasMoreElements()) {
+                tokens.add(tokenizer.nextToken());
+            }
+            while (tokens.size() >= i + 1) {
+                for (int j = 0; j < instance.getDimension(); j++) {
+                    if (j <= i) {
+                        instance.edge_weight_matrix[i][j] = Integer.parseInt(tokens.get(j));
+                        instance.edge_weight_matrix[j][i] = Integer.parseInt(tokens.get(j));
+                    }
+
+                }
+                for (int j = 0; j < i + 1; j++) {
+                    tokens.remove(0);
+                }
+                i++;
+            }
+
+        }
+        //instance.printMatrix(i-1);
+    }
+
+    public void parseSolution(File file, Solution solution) throws IOException {
+
+        FileInputStream fis = new FileInputStream(file);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(isr);
+        StringBuilder content = new StringBuilder();
+        String line = "";
+        List<String> tokens;
+        StringTokenizer tokenizer;
+
+        while ((line = br.readLine()) != null) {
+
             tokens = new ArrayList<>();
             tokenizer = new StringTokenizer(line, " ");
             while (tokenizer.hasMoreElements()) {
                 tokens.add(tokenizer.nextToken());
             }
-            for (int j = 0; j < instance.getDimension(); j++) {
-                instance.edge_weight_matrix[i][j] = Integer.parseInt(tokens.get(j));
+
+            if(tokens.get(0).equals("NAME:")){
+                String filename = "data/" + tokens.get(1);
+                if(!((new File(filename + ".tsp")).exists() || (new File(filename + ".atsp")).exists())) {
+                    throw new FileNotFoundException();
+                }
+                File inst_file = new File(filename + ".tsp");
+                if(!(inst_file.exists())) inst_file = new File(filename + ".atsp");
+
+                Instance inst = new Instance();
+                setParameters(inst_file, inst);
+                solution = new Solution(inst);
+
+            } else if(tokens.get(0).equals("DIMENSION:")) {
+                solution.size = Integer.parseInt(tokens.get(1));
+
+            } else if(tokens.get(0).equals("TOUR_SECTION")) {
+                solution.order = new ArrayList<>();
+                while (!((line = br.readLine()).startsWith("-1"))) {
+                    tokens = new ArrayList<>();
+                    tokenizer = new StringTokenizer(line, " ");
+                    while (tokenizer.hasMoreElements()) {
+                        tokens.add(tokenizer.nextToken());
+                    }
+                    solution.order.add(Integer.valueOf(tokens.get(0)));
+                }
             }
-            i++;
+
         }
-        //instance.printMatrix(i-1);
     }
 }

@@ -87,4 +87,65 @@ public class ToFileWriter {
         }
 
     }
+
+    public void saveToFile(Solution solution) {
+
+        try {
+            String path = "data/" + solution.instance.getName();
+            if (solution.instance.getType() == Instance.type_enum.TSP) path = path + ".tsp";
+            else if (solution.instance.getType() == Instance.type_enum.ATSP) path = path + ".atsp";
+
+            File fout = new File(path);
+            if (!(fout.exists())) {
+                this.saveToFile(solution.instance);
+            }
+
+
+            int n = 1;
+            do {
+                path = "data/" + solution.instance.getName() + "_" + n + ".tour";
+                fout = new File(path);
+                n++;
+            } while (fout.exists());
+
+            FileOutputStream fos = new FileOutputStream(fout);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            BufferedWriter bw = new BufferedWriter(osw);
+
+            String temp = "NAME: " + solution.instance.getName();
+            bw.write(temp);
+            bw.newLine();
+
+            temp = "TYPE: TOUR";
+            bw.write(temp);
+            bw.newLine();
+
+            temp = "DIMENSION: " + solution.instance.getDimension();
+            bw.write(temp);
+            bw.newLine();
+
+            temp = "TOUR_SECTION ";
+            bw.write(temp);
+            bw.newLine();
+
+            for (int i = 0; i < solution.instance.getDimension(); i++) {
+                bw.write(solution.order.get(i).toString());
+                bw.newLine();
+            }
+
+            bw.write("-1");
+            bw.newLine();
+
+            bw.write("EOF");
+            bw.newLine();
+
+            bw.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

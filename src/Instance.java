@@ -108,6 +108,7 @@ public class Instance {
     public void generateRandomInstanceEUC_2D(int size, int upper){
         this.setType(type_enum.TSP);
         this.setEdge_weight_type(edge_weight_type_enum.EUC_2D);
+        this.setDimension(size);
         Random rand = new Random();
         int x;
         int y;
@@ -128,7 +129,7 @@ public class Instance {
 
     public Solution getSolution(){
         System.out.println(node_coord_list.size());
-        Solution solution = new Solution(node_coord_list.size(),edge_weight_matrix);
+        Solution solution = new Solution(this);
         return solution;
     }
 

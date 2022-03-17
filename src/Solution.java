@@ -5,7 +5,8 @@ import java.util.Collections;
 
 public class Solution {
 
-    private int size;
+    public Instance instance;
+    public int size;
     public ArrayList<Point2D.Double> node_coord_list; // na wypadek euklidesowego i wizualizacji
     public ArrayList<Integer> order;
     private int[][] edge_weight_matrix;
@@ -14,16 +15,19 @@ public class Solution {
         Collections.shuffle(order);
     }
 
-    public Solution(int size, int[][] edge_weight_matrix){
+    public Solution(Instance instance){
         order = new ArrayList<>();
-        this.edge_weight_matrix = edge_weight_matrix;
-        this.size = size;
+        this.instance = instance;
+        this.edge_weight_matrix = instance.edge_weight_matrix;
+        this.size = instance.getDimension();
         int i = 0;
         while(i<size){
             order.add(i+1);
             i++;
         }
     }
+
+    public Solution() {}
 
     public void printOrder(){
         int i = 0;
