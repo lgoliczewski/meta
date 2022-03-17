@@ -39,9 +39,8 @@ public class Instance {
     }
     private display_data_type_enum display_data_type;
 
-    private List<Point2D.Double> node_coord_list;
-    private int[][] edge_weight_matrix;
-    private List<Tour> tours;
+    public List<Point2D.Double> node_coord_list;
+    public int[][] edge_weight_matrix;
 
     public String getName() {
         return name;
