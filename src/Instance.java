@@ -1,11 +1,12 @@
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Instance {
+public class Instance implements Serializable {
 
     private String name;
 
@@ -133,6 +134,10 @@ public class Instance {
         return solution;
     }
 
+    public ArrayList<Point2D.Double> getNode_coord_list(){
+        return node_coord_list;
+    }
+
     public void visualize(){
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -142,7 +147,7 @@ public class Instance {
 
     public int getDistance(int n, int m){
         return (int) (Math.sqrt(((node_coord_list.get(n).getX()-node_coord_list.get(m).getX())*(node_coord_list.get(n).getX()-node_coord_list.get(m).getX()))
-                +((node_coord_list.get(n).getX()-node_coord_list.get(m).getX())*(node_coord_list.get(n).getX()-node_coord_list.get(m).getX())))+0.5);
+                +((node_coord_list.get(n).getY()-node_coord_list.get(m).getY())*(node_coord_list.get(n).getY()-node_coord_list.get(m).getY())))+0.5);
     }
 
     public void printMatrix(int limit){

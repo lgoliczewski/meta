@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         /*Unzipper unzipper = new Unzipper();
         unzipper.unzip(Path.of("data/ft70.atsp.gz"), Path.of("data/ft70.atsp"));
@@ -16,19 +16,43 @@ public class Main {
         ToFileWriter tfw = new ToFileWriter();
         Parser parser = new Parser();
         Instance instance = new Instance();
-        instance.generateRandomInstanceEUC_2D(10,40); //generowanie 10 losowych punktow o wspolrzednych z przedzialu [0,40]
-        //Solution solution = instance.getSolution(); // tworzenie rozwiazania
+        instance.generateRandomInstanceEUC_2D(40,1000); //generowanie 10 losowych punktow o wspolrzednych z przedzialu [0,40]
+        Solution solution = instance.getSolution();
 
-        File file = new File("data/aaaaaaaa_1.tour");
+        /*File file = new File("data/aaaaaaaa_1.tour");
         Solution solution = new Solution();
-        parser.parseSolution(file, solution);
+        parser.parseSolution(file, solution);*/
 
-        solution.printOrder(); // poczatkowa kolejnosc punktow
-        solution.randomOrder(); // permutacja
-        solution.printOrder(); // koncowa wartosc punktow
-        System.out.println("");
-        solution.instance.printMatrix(10);
-        System.out.println("\ntotal distance: " + solution.totalDistance()+ "\n");
+        /*solution.visualize();
+        solution.randomOrder();
+        System.out.println("Na gorze: " + solution.order);
+        System.out.print("Na dole: ");
+        solution.v.printOrder();
+        solution.visualize();
+
+        solution.randomOrder();
+        System.out.println("Na gorze: " + solution.order);
+        System.out.print("Na dole: ");
+        solution.v.printOrder();
+        solution.visualize();
+
+        solution.randomOrder();
+        System.out.println("Na gorze: " + solution.order);
+        System.out.print("Na dole: ");
+        solution.v.printOrder();
+        solution.visualize();*/
+
+        AlgorithmHolder alg = new AlgorithmHolder();
+        /*solution = alg.KRandomAlgorithm(instance,9000000);
+        solution.visualize();*/
+
+        solution.randomOrder();
+        solution.printOrder();
+        solution.visualize();
+        solution = alg.TwoOptAlgorithm(instance);
+        System.out.println("Poszło");
+        solution.visualize();
+
 
         solution.instance.setName("abc");
         tfw.saveToFile(solution);
