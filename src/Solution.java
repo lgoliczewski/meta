@@ -42,6 +42,23 @@ public class Solution implements Serializable {
 
     public Solution() {}
 
+    public Solution copy() {
+        Solution s = new Solution();
+        s.instance = this.instance;
+        s.frameTitle = this.frameTitle;
+        s.size = this.size;
+        s.pointList = this.pointList;
+        s.order = new ArrayList<>();
+
+        for(int i = 0; i < this.order.size(); i++) {
+            s.order.add(this.order.get(i));
+        }
+
+        s.edge_weight_matrix = this.edge_weight_matrix;
+
+        return s;
+    }
+
     public void printOrder(){
         int i = 0;
         while(i<size){

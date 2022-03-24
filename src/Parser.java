@@ -139,6 +139,7 @@ public class Parser {
                     tokens.remove(0);
                 }
             }
+            if(i >= instance.getDimension()) break;
 
         }
         //instance.printMatrix(i-1);
@@ -178,6 +179,7 @@ public class Parser {
                 }
                 i++;
             }
+            if(i >= instance.getDimension()) break;
 
         }
         //instance.printMatrix(i-1);

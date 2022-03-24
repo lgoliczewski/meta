@@ -15,9 +15,9 @@ public class Main {
         */
         ToFileWriter tfw = new ToFileWriter();
         Parser parser = new Parser();
-        Instance instance = new Instance();
+        /*Instance instance = new Instance();
         instance.generateRandomInstanceEUC_2D(40,1000); //generowanie 10 losowych punktow o wspolrzednych z przedzialu [0,40]
-        Solution solution = instance.getSolution();
+        Solution solution = instance.getSolution();*/
 
         /*File file = new File("data/ch130.opt.tour");
         Solution solution = new Solution();
@@ -43,22 +43,22 @@ public class Main {
         solution.v.printOrder();
         solution.visualize();*/
 
-        AlgorithmHolder alg = new AlgorithmHolder();
+        /*AlgorithmHolder alg = new AlgorithmHolder();
 
         solution.randomOrder();
         solution.printOrder();
-        solution.visualize();
+        solution.visualize();*/
 
         /*solution = alg.KRandomAlgorithm(instance,9000000);
         solution.visualize();*/
 
-        solution = alg.NearestNeighbor(instance);
+        /*solution = alg.NearestNeighbor(instance);
         solution.printOrder();
         solution.visualize();
 
         solution = alg.ExNearestNeighbor(instance);
         solution.printOrder();
-        solution.visualize();
+        solution.visualize();*/
 
         /*solution = alg.TwoOptAlgorithm(instance);
         solution.printOrder();
@@ -72,10 +72,32 @@ public class Main {
         //instance.setName("aaaaaaaa");
         //tfw.saveToFile(solution);
 
-        /*File file = new File("data/ch150.tsp");
+        File file = new File("data/bays29.tsp");
         Instance i = new Instance();
         parser.setParameters(file,i);
-        i.printMatrix(10);*/
+        i.printMatrix(10);
+        Solution s = new Solution();
+        s.setFields(i);
+
+
+        AlgorithmHolder a = new AlgorithmHolder();
+        //s = a.ExNearestNeighbor(i);
+        //System.out.println(s.totalDistance());
+        //s.visualize();
+
+        long start = System.currentTimeMillis();
+        s = a.KRandomAlgorithm(i, 900000);
+        long end = System.currentTimeMillis();
+        System.out.println("total distance: " + s.totalDistance());
+        System.out.println("time : " + (end - start) + "ms");
+
+        long start1 = System.currentTimeMillis();
+        s = a.TwoOptAlgorithm(i);
+        long end1 = System.currentTimeMillis();
+        System.out.println("total distance: " + s.totalDistance());
+        System.out.println("time : " + (end1 - start1) + "ms");
+
+        //s.visualize();
 
         //File file1 = new File("data/hk48.tsp");
         //Instance i1 = new Instance();

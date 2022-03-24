@@ -10,7 +10,7 @@ public class AlgorithmHolder {
     Solution holder;
     int distance;
 
-    public Solution KRandomAlgorithm(Instance instance, int k) throws IOException, ClassNotFoundException {
+    public Solution KRandomAlgorithm(Instance instance, int k) {
         int i = 0;
         solution = instance.getSolution();
         solution.randomOrder();
@@ -21,43 +21,46 @@ public class AlgorithmHolder {
             solution.randomOrder();
             if (i == 0) {
                 distance = solution.totalDistance();
-                holder = solution;
+                //holder = solution;
+                holder = solution.copy();
             } else if(solution.totalDistance() < distance) {
                 distance = solution.totalDistance();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                holder = solution.copy();
+                /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(bos);
                 oos.writeObject(solution);
                 oos.flush();
                 oos.close();
                 bos.close();
-                byteData = bos.toByteArray();
+                byteData = bos.toByteArray();*/
             }
             i++;
             //System.out.println("Aktualne: " + distance  + ", Wylosowane: " + solution.totalDistance());
 
         }
 
-        solution.printPoints();
-        solution.printMatrix();
+        //solution.printPoints();
+        //solution.printMatrix();
         System.out.println(holder.order);
-        System.out.println(solution.order);
-        ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
-        Solution finalSolution = (Solution) new ObjectInputStream(bais).readObject();
+        //System.out.println(solution.order);
+        /*ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+        Solution finalSolution = (Solution) new ObjectInputStream(bais).readObject();*/
+        Solution finalSolution = holder.copy();
         finalSolution.frameTitle = "k-Random Solution";
         return finalSolution;
     }
 
-    public Solution TwoOptAlgorithm(Instance instance) throws IOException, ClassNotFoundException {
+    public Solution TwoOptAlgorithm(Instance instance) throws IOException {
 
         holder = instance.getSolution();
-        Solution copy;
 
         boolean isImproved = true;
         byte[] byteData;
         while (isImproved) {
             isImproved = false;
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(holder);
             oos.flush();
@@ -65,20 +68,27 @@ public class AlgorithmHolder {
             bos.close();
             byteData = bos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
-            holder = (Solution) new ObjectInputStream(bais).readObject();
+            holder = (Solution) new ObjectInputStream(bais).readObject();*/
 
             int i = 1;
             int j;
             while(i<=holder.size && !isImproved){
                 j = 1;
                 while(j<=holder.size && !isImproved){
-                    ByteArrayInputStream bais2 = new ByteArrayInputStream(byteData);
+                    /*ByteArrayInputStream bais2 = new ByteArrayInputStream(byteData);
                     candidate = (Solution) new ObjectInputStream(bais2).readObject();
                     candidate = invert(candidate,i,j);
                     if(candidate.totalDistance()<holder.totalDistance()){
                         holder = candidate;
                         isImproved = true;
+                    }*/
+                    candidate = holder.copy();
+                    candidate = invert(candidate,i,j);
+                    if(candidate.totalDistance()<holder.totalDistance()){
+                        holder = candidate.copy();
+                        isImproved = true;
                     }
+
                     System.out.println("i = " + i + ", j = " + j);
                     j++;
                 }
@@ -91,7 +101,7 @@ public class AlgorithmHolder {
         return holder;
     }
 
-    public Solution invert(Solution solution, int i, int j) throws IOException {
+    public Solution invert(Solution solution, int i, int j) {
         System.out.println("Jestem in");
         if(i>j){
             int pomi = i;
