@@ -72,10 +72,10 @@ public class Main {
         //instance.setName("aaaaaaaa");
         //tfw.saveToFile(solution);
 
-        File file = new File("data/bays29.tsp");
+        File file = new File("data/eil51.tsp");
         Instance i = new Instance();
         parser.setParameters(file,i);
-        i.printMatrix(10);
+        //i.printMatrix(10);
         Solution s = new Solution();
         s.setFields(i);
 
@@ -97,7 +97,7 @@ public class Main {
         System.out.println("total distance: " + s.totalDistance());
         System.out.println("time : " + (end1 - start1) + "ms");
 
-        //s.visualize();
+        s.visualize();
 
         //File file1 = new File("data/hk48.tsp");
         //Instance i1 = new Instance();

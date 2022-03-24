@@ -28,20 +28,25 @@ public class Parser {
                 tokens.add(tokenizer.nextToken());
             }
 
-            if(tokens.get(0).equals("NAME:")){
-                instance.setName(tokens.get(1));
+            if(tokens.get(0).startsWith("NAME")){
+                if(tokens.get(1).equals(":")) instance.setName(tokens.get(2));
+                else instance.setName(tokens.get(1));
             }
-            else if(tokens.get(0).equals("TYPE:")){
-                instance.setType(Instance.type_enum.valueOf(tokens.get(1)));
+            else if(tokens.get(0).startsWith("TYPE")){
+                if(tokens.get(1).equals(":")) instance.setType(Instance.type_enum.valueOf(tokens.get(2)));
+                else instance.setType(Instance.type_enum.valueOf(tokens.get(1)));
             }
-            else if(tokens.get(0).startsWith("DIMENSION:")){
-                instance.setDimension(Integer.parseInt(tokens.get(1)));
+            else if(tokens.get(0).startsWith("DIMENSION")){
+                if(tokens.get(1).equals(":")) instance.setDimension(Integer.parseInt(tokens.get(2)));
+                else instance.setDimension(Integer.parseInt(tokens.get(1)));
             }
-            else if(tokens.get(0).equals("EDGE_WEIGHT_TYPE:")){
-                instance.setEdge_weight_type(Instance.edge_weight_type_enum.valueOf(tokens.get(1)));
+            else if(tokens.get(0).startsWith("EDGE_WEIGHT_TYPE")){
+                if(tokens.get(1).equals(":")) instance.setEdge_weight_type(Instance.edge_weight_type_enum.valueOf(tokens.get(2)));
+                else instance.setEdge_weight_type(Instance.edge_weight_type_enum.valueOf(tokens.get(1)));
             }
-            else if(tokens.get(0).equals("EDGE_WEIGHT_FORMAT:")){
-                instance.setEdge_weight_format(Instance.edge_weight_format_enum.valueOf(tokens.get(1)));
+            else if(tokens.get(0).startsWith("EDGE_WEIGHT_FORMAT")){
+                if(tokens.get(1).equals(":")) instance.setEdge_weight_format(Instance.edge_weight_format_enum.valueOf(tokens.get(2)));
+                else instance.setEdge_weight_format(Instance.edge_weight_format_enum.valueOf(tokens.get(1)));
             }
 
         }
