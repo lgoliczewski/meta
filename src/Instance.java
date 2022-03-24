@@ -28,20 +28,6 @@ public class Instance implements Serializable {
     }
     private edge_weight_format_enum edge_weight_format;
 
-    /*private enum edge_data_format_enum {
-        EDGE_LIST, ADJ_LIST;
-    }
-    private edge_data_format_enum edge_data_format;
-    private enum node_coord_type_enum {
-        TWOD_COORDS, THREED_COORDS, NO_COORDS;
-    }
-    private node_coord_type_enum node_coord_type;
-    */
-    public enum display_data_type_enum {
-        COORD_DISPLAY, TWO_DISPLAY, NO_DISPLAY
-    }
-    private display_data_type_enum display_data_type;
-
     public ArrayList<Point2D.Double> node_coord_list;
     public int[][] edge_weight_matrix;
 
@@ -65,10 +51,6 @@ public class Instance implements Serializable {
         return edge_weight_format;
     }
 
-    public display_data_type_enum getDisplay_data_type() {
-        return display_data_type;
-    }
-
     public void setType(type_enum type) {
         this.type = type;
     }
@@ -87,10 +69,6 @@ public class Instance implements Serializable {
 
     public void setEdge_weight_format(edge_weight_format_enum edge_weight_format) {
         this.edge_weight_format = edge_weight_format;
-    }
-
-    public void setDisplay_data_type(display_data_type_enum display_data_type) {
-        this.display_data_type = display_data_type;
     }
 
     public void printList(){
@@ -130,7 +108,8 @@ public class Instance implements Serializable {
 
     public Solution getSolution(){
         System.out.println(node_coord_list.size());
-        Solution solution = new Solution(this);
+        Solution solution = new Solution();
+        solution.setFields(this);
         return solution;
     }
 

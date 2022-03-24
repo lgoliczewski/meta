@@ -1,5 +1,6 @@
 import javax.swing.plaf.synth.SynthToolBarUI;
 import java.io.*;
+import java.util.ArrayList;
 
 public class AlgorithmHolder {
 
@@ -42,6 +43,7 @@ public class AlgorithmHolder {
         System.out.println(solution.order);
         ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
         Solution finalSolution = (Solution) new ObjectInputStream(bais).readObject();
+        finalSolution.frameTitle = "k-Random Solution";
         return finalSolution;
     }
 
@@ -54,6 +56,7 @@ public class AlgorithmHolder {
         byte[] byteData;
         while (isImproved) {
             isImproved = false;
+
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(holder);
@@ -63,6 +66,7 @@ public class AlgorithmHolder {
             byteData = bos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
             holder = (Solution) new ObjectInputStream(bais).readObject();
+
             int i = 1;
             int j;
             while(i<=holder.size && !isImproved){
@@ -81,6 +85,8 @@ public class AlgorithmHolder {
                 i++;
             }
         }
+
+        holder.frameTitle = "2-OPT Solution";
 
         return holder;
     }
@@ -108,8 +114,62 @@ public class AlgorithmHolder {
     }
 
     public Solution NearestNeighbor(Instance instance){
-        return null;
+        holder = NearestNeighborWithStartIndex(instance, 1);
+        holder.frameTitle = "Nearest Neighbor Solution";
+        return holder;
     }
+
+    public Solution ExNearestNeighbor(Instance instance){
+
+        int currLowestDistance = Integer.MAX_VALUE;
+        int distance;
+        for(int i = 1; i <= instance.getDimension(); i++) {
+            candidate = NearestNeighborWithStartIndex(instance, i);
+
+            distance = candidate.totalDistance();
+            if (distance < currLowestDistance) {
+                currLowestDistance = distance;
+                holder = candidate;
+            }
+        }
+        holder.frameTitle = "Expanded Nearest Neighbor Solution";
+
+        return holder;
+    }
+
+    private Solution NearestNeighborWithStartIndex(Instance instance, int start){
+        solution = new Solution();
+        solution.setFields(instance);
+        ArrayList<Integer> notVisited = solution.order;
+        solution.order = new ArrayList<>();
+
+        int curr = start;
+        solution.order.add(curr);
+        notVisited.remove(Integer.valueOf(curr));
+        int toCurrNearest;
+        int currNearestIndex = 0;
+        int distance;
+
+        while (notVisited.size() > 0) {
+            toCurrNearest = Integer.MAX_VALUE;
+
+            for (int i = 0; i < notVisited.size(); i++) {
+                distance = instance.edge_weight_matrix[curr-1][notVisited.get(i)-1];
+                if(distance < toCurrNearest) {
+                    toCurrNearest = distance;
+                    currNearestIndex = notVisited.get(i);
+                }
+            }
+
+            solution.order.add(currNearestIndex);
+            notVisited.remove(Integer.valueOf(currNearestIndex));
+            curr = currNearestIndex;
+
+        }
+
+        return solution;
+    }
+
 
 }
 

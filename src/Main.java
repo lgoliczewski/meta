@@ -19,9 +19,10 @@ public class Main {
         instance.generateRandomInstanceEUC_2D(40,1000); //generowanie 10 losowych punktow o wspolrzednych z przedzialu [0,40]
         Solution solution = instance.getSolution();
 
-        /*File file = new File("data/aaaaaaaa_1.tour");
+        /*File file = new File("data/ch130.opt.tour");
         Solution solution = new Solution();
-        parser.parseSolution(file, solution);*/
+        parser.parseSolution(file, solution);
+        solution.visualize();*/
 
         /*solution.visualize();
         solution.randomOrder();
@@ -43,28 +44,38 @@ public class Main {
         solution.visualize();*/
 
         AlgorithmHolder alg = new AlgorithmHolder();
-        /*solution = alg.KRandomAlgorithm(instance,9000000);
-        solution.visualize();*/
 
         solution.randomOrder();
         solution.printOrder();
         solution.visualize();
-        solution = alg.TwoOptAlgorithm(instance);
-        System.out.println("Poszło");
+
+        /*solution = alg.KRandomAlgorithm(instance,9000000);
+        solution.visualize();*/
+
+        solution = alg.NearestNeighbor(instance);
+        solution.printOrder();
         solution.visualize();
 
+        solution = alg.ExNearestNeighbor(instance);
+        solution.printOrder();
+        solution.visualize();
 
-        solution.instance.setName("abc");
-        tfw.saveToFile(solution);
+        /*solution = alg.TwoOptAlgorithm(instance);
+        solution.printOrder();
+        solution.visualize();*/
+
+
+        //solution.instance.setName("abc");
+        //tfw.saveToFile(solution);
 
 
         //instance.setName("aaaaaaaa");
         //tfw.saveToFile(solution);
 
-        //File file = new File("data/ch150.tsp");
-        //Instance i = new Instance();
-        //parser.setParameters(file,i);
-        //i.printMatrix(10);
+        /*File file = new File("data/ch150.tsp");
+        Instance i = new Instance();
+        parser.setParameters(file,i);
+        i.printMatrix(10);*/
 
         //File file1 = new File("data/hk48.tsp");
         //Instance i1 = new Instance();

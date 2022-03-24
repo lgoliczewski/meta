@@ -14,12 +14,11 @@ public class Parser {
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader br = new BufferedReader(isr);
-        StringBuilder content = new StringBuilder();
         String line = "";
 
         List<String> tokens;
         StringTokenizer tokenizer;
-        int i = 0;
+
         while ((line = br.readLine()) != null) {
             if (line.startsWith("NODE_COORD_SECTION") || line.startsWith("EDGE_WEIGHT_SECTION")) break;
 
@@ -44,10 +43,7 @@ public class Parser {
             else if(tokens.get(0).equals("EDGE_WEIGHT_FORMAT:")){
                 instance.setEdge_weight_format(Instance.edge_weight_format_enum.valueOf(tokens.get(1)));
             }
-            else if(tokens.get(0).equals("DISPLAY_DATA_TYPE")){
-                instance.setDisplay_data_type(Instance.display_data_type_enum.valueOf(tokens.get(1)));
-            }
-            i++;
+
         }
 
         if (instance.getEdge_weight_type() == Instance.edge_weight_type_enum.EUC_2D) {
@@ -69,7 +65,7 @@ public class Parser {
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader br = new BufferedReader(isr);
-        StringBuilder content = new StringBuilder();
+
         String line = br.readLine();
 
         List<String> tokens = null;
@@ -79,7 +75,7 @@ public class Parser {
             line = br.readLine();
         }
         int i = 0;
-        while(!(line = br.readLine()).equals("EOF")){
+        while(!(line = br.readLine()).startsWith("EOF")){
             tokens = new ArrayList<>();
             tokenizer = new StringTokenizer(line, " ");
             while (tokenizer.hasMoreElements()) {
@@ -120,7 +116,7 @@ public class Parser {
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader br = new BufferedReader(isr);
-        StringBuilder content = new StringBuilder();
+
         String line = br.readLine();
         List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer;
@@ -129,7 +125,7 @@ public class Parser {
             line = br.readLine();
         }
         int i = 0;
-        while(!(line = br.readLine()).equals("EOF")){
+        while(!(line = br.readLine()).startsWith("EOF")){
             tokenizer = new StringTokenizer(line, " ");
             while (tokenizer.hasMoreElements()) {
                 tokens.add(tokenizer.nextToken());
@@ -155,7 +151,7 @@ public class Parser {
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader isr = new InputStreamReader(fis);
         BufferedReader br = new BufferedReader(isr);
-        StringBuilder content = new StringBuilder();
+
         String line = br.readLine();
         List<String> tokens = new ArrayList<>();
         StringTokenizer tokenizer;
@@ -164,7 +160,7 @@ public class Parser {
             line = br.readLine();
         }
         int i = 0;
-        while(!(line = br.readLine()).equals("EOF")){
+        while(!(line = br.readLine()).startsWith("EOF")){
             tokenizer = new StringTokenizer(line, " ");
             while (tokenizer.hasMoreElements()) {
                 tokens.add(tokenizer.nextToken());
@@ -205,8 +201,13 @@ public class Parser {
                 tokens.add(tokenizer.nextToken());
             }
 
-            if(tokens.get(0).equals("NAME:")){
-                String filename = "data/" + tokens.get(1);
+            if(tokens.get(0).startsWith("NAME")){
+                String filename;
+                if(tokens.get(1).equals(":")) filename = "data/" + tokens.get(2);
+                else filename = "data/" + tokens.get(1);
+                filename = filename.substring(0, filename.indexOf('.'));
+
+
                 if(!((new File(filename + ".tsp")).exists() || (new File(filename + ".atsp")).exists())) {
                     throw new FileNotFoundException();
                 }
@@ -215,13 +216,14 @@ public class Parser {
 
                 Instance inst = new Instance();
                 setParameters(inst_file, inst);
-                solution = new Solution(inst);
-
-            } else if(tokens.get(0).equals("DIMENSION:")) {
-                solution.size = Integer.parseInt(tokens.get(1));
-
-            } else if(tokens.get(0).equals("TOUR_SECTION")) {
+                solution.setFields(inst);
                 solution.order = new ArrayList<>();
+
+            } else if(tokens.get(0).startsWith("DIMENSION")) {
+                if(tokens.get(1).equals(":")) solution.size = Integer.parseInt(tokens.get(2));
+                else solution.size = Integer.parseInt(tokens.get(1));
+
+            } else if(tokens.get(0).startsWith("TOUR_SECTION")) {
                 while (!((line = br.readLine()).startsWith("-1"))) {
                     tokens = new ArrayList<>();
                     tokenizer = new StringTokenizer(line, " ");

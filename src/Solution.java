@@ -11,6 +11,7 @@ import java.util.HashSet;
 public class Solution implements Serializable {
 
     public Visualization v;
+    public String frameTitle = "";
     public Instance instance;
     public int size;
     public ArrayList<Point2D.Double> pointList; // na wypadek euklidesowego i wizualizacji
@@ -26,7 +27,7 @@ public class Solution implements Serializable {
         return this;
     }
 
-    public Solution(Instance instance){
+    public void setFields(Instance instance){
         order = new ArrayList<>();
         this.instance = instance;
         this.edge_weight_matrix = instance.edge_weight_matrix;
@@ -106,7 +107,7 @@ public class Solution implements Serializable {
 
     public void visualize(){
 
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame(frameTitle);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(850,850);
         frame.setVisible(true);
