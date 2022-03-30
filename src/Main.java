@@ -72,7 +72,7 @@ public class Main {
         //instance.setName("aaaaaaaa");
         //tfw.saveToFile(solution);
 
-        File file = new File("data/eil51.tsp");
+        File file = new File("data/tsp225.tsp");
         Instance i = new Instance();
         parser.setParameters(file,i);
         //i.printMatrix(10);
@@ -86,18 +86,18 @@ public class Main {
         //s.visualize();
 
         long start = System.currentTimeMillis();
-        s = a.KRandomAlgorithm(i, 900000);
+        s = a.TwoOptAlgorithm(i);
         long end = System.currentTimeMillis();
         System.out.println("total distance: " + s.totalDistance());
         System.out.println("time : " + (end - start) + "ms");
 
         long start1 = System.currentTimeMillis();
-        s = a.TwoOptAlgorithm(i);
+        s = a.AccelTwoOptAlgorithm(i);
         long end1 = System.currentTimeMillis();
         System.out.println("total distance: " + s.totalDistance());
         System.out.println("time : " + (end1 - start1) + "ms");
 
-        s.visualize();
+        //s.visualize();
 
         //File file1 = new File("data/hk48.tsp");
         //Instance i1 = new Instance();

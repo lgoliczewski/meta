@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class AlgorithmHolder {
 
     Solution solution;
-    Solution twoOptSolution;
     Solution candidate;
     Solution holder;
     int distance;
@@ -15,25 +14,16 @@ public class AlgorithmHolder {
         solution = instance.getSolution();
         solution.randomOrder();
         Solution holder = null;
-        byte[] byteData = new byte[0];
 
         while (i < k) {
             solution.randomOrder();
             if (i == 0) {
                 distance = solution.totalDistance();
-                //holder = solution;
                 holder = solution.copy();
             } else if(solution.totalDistance() < distance) {
                 distance = solution.totalDistance();
 
                 holder = solution.copy();
-                /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(bos);
-                oos.writeObject(solution);
-                oos.flush();
-                oos.close();
-                bos.close();
-                byteData = bos.toByteArray();*/
             }
             i++;
             //System.out.println("Aktualne: " + distance  + ", Wylosowane: " + solution.totalDistance());
@@ -44,8 +34,6 @@ public class AlgorithmHolder {
         //solution.printMatrix();
         System.out.println(holder.order);
         //System.out.println(solution.order);
-        /*ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
-        Solution finalSolution = (Solution) new ObjectInputStream(bais).readObject();*/
         Solution finalSolution = holder.copy();
         finalSolution.frameTitle = "k-Random Solution";
         return finalSolution;
@@ -54,42 +42,30 @@ public class AlgorithmHolder {
     public Solution TwoOptAlgorithm(Instance instance) throws IOException {
 
         holder = instance.getSolution();
+        int currBestDistance = holder.totalDistance();
+        int newDistance = currBestDistance;
 
         boolean isImproved = true;
-        byte[] byteData;
+
         while (isImproved) {
             isImproved = false;
-
-            /*ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(holder);
-            oos.flush();
-            oos.close();
-            bos.close();
-            byteData = bos.toByteArray();
-            ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
-            holder = (Solution) new ObjectInputStream(bais).readObject();*/
 
             int i = 1;
             int j;
             while(i<=holder.size && !isImproved){
-                j = 1;
+                j = i + 1;
                 while(j<=holder.size && !isImproved){
-                    /*ByteArrayInputStream bais2 = new ByteArrayInputStream(byteData);
-                    candidate = (Solution) new ObjectInputStream(bais2).readObject();
-                    candidate = invert(candidate,i,j);
-                    if(candidate.totalDistance()<holder.totalDistance()){
-                        holder = candidate;
-                        isImproved = true;
-                    }*/
+
                     candidate = holder.copy();
                     candidate = invert(candidate,i,j);
-                    if(candidate.totalDistance()<holder.totalDistance()){
+                    newDistance = candidate.totalDistance();
+                    if(newDistance<currBestDistance){
                         holder = candidate.copy();
+                        currBestDistance = newDistance;
                         isImproved = true;
                     }
 
-                    System.out.println("i = " + i + ", j = " + j);
+                    //System.out.println("i = " + i + ", j = " + j);
                     j++;
                 }
                 i++;
@@ -101,8 +77,75 @@ public class AlgorithmHolder {
         return holder;
     }
 
+    public Solution AccelTwoOptAlgorithm(Instance instance) throws IOException {
+
+        holder = instance.getSolution();
+        int currBestDistance = holder.totalDistance();
+        int newDistance = currBestDistance;
+
+        int[] swapDistances = new int[4]; // elementy o indeksach 0 i 1 będziemy odejmować, 2 i 3 dodawać;
+        boolean isImproved = true;
+
+        while (isImproved) {
+            isImproved = false;
+
+            int i = 1;
+            int j;
+            while(i<=holder.size && !isImproved){
+                j = i + 1;
+                while(j<=holder.size && !isImproved){
+
+                    candidate = holder.copy();
+                    candidate = invert(candidate,i,j);
+
+                    if (instance.getType().equals(Instance.type_enum.TSP) && !(i == 1 && j == holder.size)) {
+
+                        if (i > 1) {
+                            // odleglosc miedzy i-1-wszym oraz i-tym do odjecia
+                            swapDistances[0] = instance.edge_weight_matrix[holder.order.get(i - 2) - 1][holder.order.get(i - 1) - 1];
+                            // odleglosc miedzy i-1-wszym oraz j-tym do dodania
+                            swapDistances[2] = instance.edge_weight_matrix[holder.order.get(i - 2) - 1][holder.order.get(j - 1) - 1];
+                        } else {
+                            swapDistances[0] = instance.edge_weight_matrix[holder.order.get(holder.size - 1) - 1][holder.order.get(i - 1) - 1];
+                            swapDistances[2] = instance.edge_weight_matrix[holder.order.get(holder.size - 1) - 1][holder.order.get(j - 1) - 1];
+                        }
+
+                        if (j < holder.size) {
+                            // odleglosc miedzy j-tym raz j+1-wszym do odjecia
+                            swapDistances[1] = instance.edge_weight_matrix[holder.order.get(j - 1) - 1][holder.order.get(j) - 1];
+                            // odleglosc miedzy i-tym raz j+1-wszym do dodania
+                            swapDistances[3] = instance.edge_weight_matrix[holder.order.get(i - 1) - 1][holder.order.get(j) - 1];
+                        } else {
+                            swapDistances[1] = instance.edge_weight_matrix[holder.order.get(j - 1) - 1][holder.order.get(0) - 1];
+                            swapDistances[3] = instance.edge_weight_matrix[holder.order.get(i - 1) - 1][holder.order.get(0) - 1];
+                        }
+
+                        newDistance = currBestDistance - swapDistances[0] - swapDistances[1] + swapDistances[2] + swapDistances[3];
+
+                    } else if (instance.getType().equals(Instance.type_enum.ATSP)){
+                        newDistance = candidate.totalDistance();
+                    }
+
+                    if(newDistance<currBestDistance){
+                        holder = candidate.copy();
+                        currBestDistance = newDistance;
+                        isImproved = true;
+                    }
+
+                    //System.out.println("i = " + i + ", j = " + j);
+                    j++;
+                }
+                i++;
+            }
+        }
+
+        holder.frameTitle = "Accelerated 2-OPT Solution";
+
+        return holder;
+    }
+
     public Solution invert(Solution solution, int i, int j) {
-        System.out.println("Jestem in");
+        //System.out.println("Jestem in");
         if(i>j){
             int pomi = i;
             int pomj = j;
@@ -142,7 +185,7 @@ public class AlgorithmHolder {
                 holder = candidate;
             }
         }
-        holder.frameTitle = "Expanded Nearest Neighbor Solution";
+        holder.frameTitle = "Extended Nearest Neighbor Solution";
 
         return holder;
     }

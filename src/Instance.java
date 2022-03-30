@@ -107,7 +107,7 @@ public class Instance implements Serializable {
     }
 
     public Solution getSolution(){
-        System.out.println(dimension);
+        //System.out.println(dimension);
         Solution solution = new Solution();
         solution.setFields(this);
         return solution;

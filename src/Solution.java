@@ -16,7 +16,7 @@ public class Solution implements Serializable {
     public int size;
     public ArrayList<Point2D.Double> pointList; // na wypadek euklidesowego i wizualizacji
     public ArrayList<Integer> order;
-    private int[][] edge_weight_matrix;
+    public int[][] edge_weight_matrix;
 
     public void randomOrder(){
         Collections.shuffle(order);
